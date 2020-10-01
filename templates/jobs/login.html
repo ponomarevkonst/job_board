@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <title>Джуманджи</title>
+  <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <main class="container">
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4">{% load crispy_forms_tags %}
+        <form class="form-signin pt-5" action="login" method="POST">{% csrf_token %}
+            <div class="text-center mt-5 b-1">
+
+            <h1 class="h3 mb-3 font-weight-normal">Джуманджи</h1>
+            <p class="h5 font-weight-light">Войдите, чтобы управлять</p>
+            </div>
+            <div class="mt-5 form-label-group">
+            {{ form|crispy }}
+            </div>
+            <input type="hidden" name="next" value="{{ request.META.HTTP_REFERER }}">
+            <div class="checkbox mb-3">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Войти</button>
+            </div>
+        </form>
+
+        <div class="mt-4 text-center"><p>Нет аккаунта? <a href="/register">Зарегистрируйтесь!</a></p></div>
+
+      </div>
+    </div>
+  </main>
+</body>
+</html>

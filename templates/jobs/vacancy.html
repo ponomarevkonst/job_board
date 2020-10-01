@@ -1,0 +1,39 @@
+{% extends 'base.html' %} {% block container %}
+
+  <main class="container mt-3 pb-5">
+    <div class="row mt-5">
+      <div class="col-12 col-lg-2">
+        <div class="pl-3 mb-5">
+          <p><a href="{{ request.META.HTTP_REFERER }}">Назад</a></p>
+        </div>
+      </div>
+      <div class="col-12 col-lg-8">
+        <section class="pl-3">
+          <a href="{% url 'company' company.id %}"><img src="{{ company.logo.url }}" width="130" height="80" alt=""></a>
+          <div class="d-flex align-items-baseline align-content-baseline">
+            <h1 class="h2 mt-4 font-weight-bold" >{{ vacancy.title }}</h1>
+            <p class="m-0 pl-3">{{ vacancy.salary_min }} - {{ vacancy.salary_max }} Р</p>
+          </div>
+          <p class="mt-2">{{ vacancy.skills }}</p>
+          <p class="text-muted mb-4"> {{ company.name }} ({{ company.employee_count }} человек), {{ company.location }}</p>
+          <div style="line-height: 1.8;">
+            {{ vacancy.description }}
+          </div>
+          <form method="POST" action="{% url 'application' vacancy.id %}" class="card mt-4 mb-3">{% csrf_token %}{% load crispy_forms_tags %}
+            <div class="card-body mx-3">{% if user.is_authenticated %}
+              <p class="h5 mt-4 mb-4 font-weight-normal">Отозваться на вакансию</p>
+              <div class="form-group">
+                {{ form|crispy }}
+              </div>
+              <input type="submit" class="btn btn-primary mt-4 mb-2" value="Откликнутся">{% else %}
+                <div class="text-center">
+                    <p class="mt-4 mb-2">Необходимо авторизоваться для отправки отклика.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary mt-4 mb-2">Войти</a>
+                </div>{% endif %}
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+{% endblock %}
