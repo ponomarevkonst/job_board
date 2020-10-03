@@ -22,8 +22,8 @@ companies = [
     {"title": "workiro"},
     {"title": "rebelrage"},
     {"title": "staffingsmarter"},
-    {"title": "evilthreat h"},
-    {"title": "hirey "},
+    {"title": "evilthreath"},
+    {"title": "hirey"},
     {"title": "swiftattack"},
     {"title": "troller"},
     {"title": "primalassault"}

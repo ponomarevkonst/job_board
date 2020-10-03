@@ -1,3 +1,4 @@
+import random
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from data import specialties, companies, jobs
@@ -10,10 +11,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user = User.objects.first()
         for specialty in specialties:
-            Specialty(code=specialty['code'], title=specialty['title']).save()
+            picture_name = 'specty_' + specialty['code'] + '.png'
+            picture_path = 'speciality_images/' + picture_name
+            spec = Specialty(code=specialty['code'], title=specialty['title'], picture=picture_path).save()
 
         for company in companies:
-            Company(name=company['title'], employee_count=100, owner=user).save()
+            picture_name = company['title'] + '.png'
+            logo_path = 'company_images/' + picture_name
+            company = Company(name=company['title'], employee_count=random.randint(10, 50), owner=user, logo=logo_path).save()
 
         for job in jobs:
             specialty = Specialty.objects.filter(code=job['cat'])[0]

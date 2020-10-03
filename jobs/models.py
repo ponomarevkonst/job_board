@@ -19,9 +19,9 @@ class Specialty(models.Model):
 
 
 class Company(models.Model):
-    name = models.CharField(max_length=30)
-    location = models.CharField(max_length=30)
-    description = models.CharField(max_length=30)
+    name = models.CharField(max_length=40)
+    location = models.CharField(max_length=50)
+    description = models.CharField(max_length=60)
     employee_count = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     logo = models.ImageField(upload_to=MEDIA_COMPANY_IMAGE_DIR, height_field='height_field', width_field='width_field')
@@ -37,7 +37,7 @@ class Company(models.Model):
 
 
 class Vacancy(models.Model):
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=200)
     specialty = models.ForeignKey(Specialty, related_name="vacancies", on_delete=models.CASCADE)
     company = models.ForeignKey(Company, related_name="vacancies", on_delete=models.CASCADE)
     skills = models.CharField(max_length=30)

@@ -29,11 +29,7 @@ class RegisterForm(UserCreationForm):
         return user
 
 
-class ApplicationForm(ModelForm):
+class ApplicationForm(forms.Form):
     written_username = forms.CharField(label='Имя')
     written_phone = forms.CharField(label='Номер телефона')
     written_cover_letter = forms.CharField(label='Сопроводительное письмо', widget=forms.Textarea)
-
-    class Meta:
-        model = Application
-        fields = ('written_username', 'written_phone', 'written_cover_letter')
