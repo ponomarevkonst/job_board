@@ -2,6 +2,7 @@ import random
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from data import specialties, companies, jobs
+from job_board.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
 from jobs.models import Specialty, Company, Vacancy
 
 
@@ -12,13 +13,13 @@ class Command(BaseCommand):
         user = User.objects.first()
         for specialty in specialties:
             picture_name = 'specty_' + specialty['code'] + '.png'
-            picture_path = 'speciality_images/' + picture_name
-            spec = Specialty(code=specialty['code'], title=specialty['title'], picture=picture_path).save()
+            picture_path = MEDIA_SPECIALITY_IMAGE_DIR + picture_name
+            Specialty(code=specialty['code'], title=specialty['title'], picture=picture_path).save()
 
         for company in companies:
-            picture_name = company['title'] + '.png'
-            logo_path = 'company_images/' + picture_name
-            company = Company(name=company['title'], employee_count=random.randint(10, 50), owner=user, logo=logo_path).save()
+            logo_name = company['title'] + '.png'
+            logo_path = MEDIA_COMPANY_IMAGE_DIR + logo_name
+            Company(name=company['title'], employee_count=random.randint(10, 50), owner=user, logo=logo_path).save()
 
         for job in jobs:
             specialty = Specialty.objects.filter(code=job['cat'])[0]
