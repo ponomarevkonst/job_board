@@ -19,7 +19,7 @@ from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from account.views import resumes_view, mycompany_view, MyResumeView, MyCompanyView
+from account.views import MyResumeView, MyCompanyView
 from jobs.views import vacancies_view, index_view, custom_handler404, custom_handler500, MyLoginView, \
     MySignupView, application, companies_view, search
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index_view, name='index'),
     path('companies/<int:company_id>', companies_view, name='company'),
+
     path('vacancies/<str:id>', vacancies_view, name='vacancy'),
     path('vacancies/cat/<str:id>', vacancies_view, name='vacancies_by_category'),
     path('vacancies/', vacancies_view, name='vacancies'),

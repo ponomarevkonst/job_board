@@ -4,11 +4,10 @@ from django.contrib.postgres.search import SearchVector
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect, request as req
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView
-
+from django.views.generic import CreateView, ListView
 from job_board.settings import LOGIN_REDIRECT_URL
 from jobs.forms import RegisterForm, ApplicationForm, SearchForm
-from jobs.models import Company, Vacancy, Specialty, Application
+from jobs.models import Company, Vacancy, Specialty
 
 
 class MySignupView(CreateView):
