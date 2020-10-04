@@ -43,7 +43,7 @@ def companies_view(request, company_id, context={}):
     company = get_object_or_404(Company, id=company_id)
     context['vacancies'] = company.vacancies.all()
     context['company'] = {'name': company.name, 'logo': company.logo}
-    return render(request, 'company.html', context)
+    return render(request, 'company/company.html', context)
 
 
 def vacancies_view(request, id=None, context={}):  # @TODO make 3 different classes for increasing readability
@@ -52,7 +52,7 @@ def vacancies_view(request, id=None, context={}):  # @TODO make 3 different clas
             context['vacancy'] = get_object_or_404(Vacancy, id=id)
             context['company'] = context['vacancy'].company
             context['form'] = ApplicationForm()
-            return render(request, 'vacancy.html', context)
+            return render(request, 'vacancy/vacancy.html', context)
         else:  # get vacancies by category_id
             category_name = Specialty.objects.filter(code=id).first().title
             context['category_name'] = category_name if category_name else 'Категория не найдена'
@@ -60,7 +60,7 @@ def vacancies_view(request, id=None, context={}):  # @TODO make 3 different clas
     else:  # get all vacancies
         context['category_name'] = 'Все вакансии'
         context['vacancies'] = Vacancy.objects.all()
-    return render(request, 'vacancies.html', context)
+    return render(request, 'vacancy/vacancies.html', context)
 
 
 def application(request, vacancy_id):
@@ -82,7 +82,7 @@ def search(request, query=None):
     if form.is_valid():
         query = form.cleaned_data['query']
         context['vacancies'] = Vacancy.objects.annotate(search=SearchVector('title', 'description')).filter(search=query)
-    return render(request, 'search_page.html', context)
+    return render(request, 'search/search_page.html', context)
 
 
 

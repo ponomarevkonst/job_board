@@ -58,8 +58,8 @@ def resumes_view(request, action, update=False):
     form = ResumeForm(request.POST or (resume.__dict__ if resume else None))
     if request.method == 'GET':
         if resume or action:
-            return render(request, 'resume-edit.html', {'form': form, 'update': update})
-        return render(request, 'resume-create.html')
+            return render(request, 'resume/resume-edit.html', {'form': form, 'update': update})
+        return render(request, 'resume/resume-create.html')
     if request.method == 'POST' and form.is_valid():
         if resume:
             resume.delete()
@@ -67,7 +67,7 @@ def resumes_view(request, action, update=False):
         resume.user = request.user
         resume.save()
         update = True
-    return render(request, 'resume-edit.html', {'form': form, 'update': update})
+    return render(request, 'resume/resume-edit.html', {'form': form, 'update': update})
 
 
 @login_required
@@ -76,8 +76,8 @@ def mycompany_view(request, action, update=False):
     if request.method == 'GET':
         form = CompanyForm(company.__dict__ if company else None)
         if company or action:
-            return render(request, 'company-edit.html', {'form': form, 'update': update})
-        return render(request, 'company-create.html')
+            return render(request, 'company/company-edit.html', {'form': form, 'update': update})
+        return render(request, 'company/company-create.html')
     form = CompanyForm(request.POST, request.FILES)
     if request.method == 'POST' and form.is_valid():
         if company:
@@ -86,4 +86,4 @@ def mycompany_view(request, action, update=False):
         company.user = request.user
         company.save()
         update = True
-    return render(request, 'company-edit.html', {'form': form, 'update': update})
+    return render(request, 'company/company-edit.html', {'form': form, 'update': update})
