@@ -8,7 +8,7 @@ from jobs.models import Company
 
 class MyForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(MyForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_show_labels = False
 
@@ -32,8 +32,9 @@ class ResumeForm(MyForm):
 
 class CompanyForm(MyForm):
     description = forms.CharField(widget=forms.Textarea)
-    # <span class="btn btn-info px-4">Загрузить</span>
 
     class Meta:
         model = Company
         fields = ('name', 'location', 'description', 'employee_count', 'logo')
+
+    # <span class="btn btn-info px-4">Загрузить</span>

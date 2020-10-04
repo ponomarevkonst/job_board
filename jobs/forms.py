@@ -1,11 +1,8 @@
-from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, Reset, ButtonHolder
-from django.contrib.auth import login, authenticate
+from crispy_forms.layout import Layout, Field, Div
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView
-from django.forms import ModelForm
 
 from jobs.models import Application
 
@@ -29,7 +26,17 @@ class RegisterForm(UserCreationForm):
         return user
 
 
-class ApplicationForm(forms.Form):
+class ApplicationForm(forms.ModelForm):
     written_username = forms.CharField(label='Имя')
     written_phone = forms.CharField(label='Номер телефона')
     written_cover_letter = forms.CharField(label='Сопроводительное письмо', widget=forms.Textarea)
+
+    class Meta:
+        model = Application
+        fields = ('written_username', 'written_phone', 'written_cover_letter')
+
+
+class SearchForm(forms.Form):
+    query = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control w-100",
+                                                          'placeholder': "Найти работу или стажировку",
+                                                          'aria-label': "Найти работу или стажировку"}))

@@ -1,0 +1,9 @@
+<div class="col-12 col-md-8 col-lg-6 offset-lg-3 offset-md-2">
+          <form method="get" action="{% url 'search' %}" class="form-inline mb-3">{% load crispy_forms_tags %}
+            <div class="form-group col-8 col-md-10 pl-0">
+                {{ form.query }}
+            </div>
+            <div class="form-group col-4 col-md-2 pl-0">
+              <button class="btn btn-primary w-100" type="submit">Найти</button>
+            </div>
+          </form>

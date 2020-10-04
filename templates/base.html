@@ -34,8 +34,8 @@
               </button>
               <div class="dropdown-menu dropdown-menu-right mt-3">
                 <a href="#" class="dropdown-item py-2">Профиль</a>
-                <a href="#" class="dropdown-item py-2">Резюме</a>
-                <a href="#" class="dropdown-item py-2">Компания</a>
+                <a href="{% url 'myresume' action='' %}" class="dropdown-item py-2">Резюме</a>
+                <a href="{% url 'mycompany' action='' %}" class="dropdown-item зн-2">Компания</a>
                 <a href="{% url 'logout' %}" class="dropdown-item py-2">Выйти</a>
               </div>
             </div>
@@ -50,5 +50,6 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  {% if request.get_full_path == '/mycompany/create' or  request.get_full_path == '/mycompany/edit' %}{% load static %}<script src="{% static 'main.js' %}"></script>{% endif %}
 </body>
 </html>

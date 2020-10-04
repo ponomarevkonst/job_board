@@ -10,16 +10,16 @@ class Command(BaseCommand):
     help = 'Command for filling database with prepared data'
 
     def handle(self, *args, **options):
-        user = User.objects.first()
+        user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')
         for specialty in specialties:
-            picture_name = 'specty_' + specialty['code'] + '.png'
+            picture_name = '/specty_' + specialty['code'] + '.png'
             picture_path = MEDIA_SPECIALITY_IMAGE_DIR + picture_name
             Specialty(code=specialty['code'], title=specialty['title'], picture=picture_path).save()
 
         for company in companies:
             logo_name = company['title'] + '.png'
-            logo_path = MEDIA_COMPANY_IMAGE_DIR + logo_name
-            Company(name=company['title'], employee_count=random.randint(10, 50), owner=user, logo=logo_path).save()
+            logo_path = MEDIA_COMPANY_IMAGE_DIR + '/' + logo_name
+            Company(name=company['title'], employee_count=random.randint(10, 50), user=user, logo=logo_path).save()
 
         for job in jobs:
             specialty = Specialty.objects.filter(code=job['cat'])[0]

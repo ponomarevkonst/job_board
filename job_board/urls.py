@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import path
+from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from jobs.views import vacancies_view, companies_view, index_view, custom_handler404, custom_handler500, MyLoginView, \
-    MySignupView, application
+from account.views import resumes_view, mycompany_view, MyResumeView, MyCompanyView
+from jobs.views import vacancies_view, index_view, custom_handler404, custom_handler500, MyLoginView, \
+    MySignupView, application, companies_view, search
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,9 +31,12 @@ urlpatterns = [
     path('vacancies/cat/<str:id>', vacancies_view, name='vacancies_by_category'),
     path('vacancies/', vacancies_view, name='vacancies'),
     path('vacancies/<vacancy_id>/send', application, name='application'),
-    # path('mycompany/', vacancies_view, name='mycompany'),
-    # path('mycompany/vacancies', vacancies_view, name='vacancies_of_mycompany'),
-    # path('mycompany/vacancies/<vacancy_id>', vacancies_view, name='my_vacancy'),
+
+    re_path('myresume/(?P<action>edit|create|.*)$', MyResumeView.as_view(), name='myresume'),
+    re_path('mycompany/(?P<action>edit|create|.*)$', MyCompanyView.as_view(), name='mycompany'),
+
+    path('search/', search, name='search'),
+    path('search/<query>', search, name='search_with_param'),
     path('login', MyLoginView.as_view(), name='login'),
     path('register', MySignupView.as_view(), name='register'),
     path('logout', LogoutView.as_view(), name='logout')
