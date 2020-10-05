@@ -19,29 +19,39 @@ from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from account.views import MyResumeView, MyCompanyView
-from jobs.views import vacancies_view, index_view, custom_handler404, custom_handler500, MyLoginView, \
-    MySignupView, application, companies_view, search
+from account.views import VacancyListView, VacancyEditView, ResumeEditView, \
+    ResumeCreateView, myresume_dispatch, mycompany_dispatch
+from jobs.views import custom_handler404, custom_handler500, MyLoginView, \
+    MySignupView, CompaniesView, search, CompaniesListView, IndexView, VacanciesListView, VacancyView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index_view, name='index'),
-    path('companies/<int:company_id>', companies_view, name='company'),
+    path('', IndexView.as_view(), name='index'),
 
-    path('vacancies/<str:id>', vacancies_view, name='vacancy'),
-    path('vacancies/cat/<str:id>', vacancies_view, name='vacancies_by_category'),
-    path('vacancies/', vacancies_view, name='vacancies'),
-    path('vacancies/<vacancy_id>/send', application, name='application'),
+    path('companies/<int:pk>', CompaniesView.as_view(), name='company'),
+    path('companies/list', CompaniesListView.as_view(), name='company_list'),
 
-    re_path('myresume/(?P<action>edit|create|.*)$', MyResumeView.as_view(), name='myresume'),
-    re_path('mycompany/(?P<action>edit|create|.*)$', MyCompanyView.as_view(), name='mycompany'),
+    path('vacancies/cat/<pk>', VacanciesListView.as_view(), name='vacancies'),
+    path('vacancies/', VacanciesListView.as_view(), name='vacancies_list'),
+    path('vacancies/<pk>', VacancyView.as_view(), name='vacancy'),
+
+    path('myresume', myresume_dispatch, name='myresume'),
+    path('myresume/edit', ResumeEditView.as_view(), name='myresume_edit'),
+    path('myresume/create', ResumeCreateView.as_view(), name='myresume_create'),
+
+    path('mycompany', mycompany_dispatch, name='mycompany'),
+    path('mycompany/edit', ResumeEditView.as_view(), name='mycompany_edit'),
+    path('mycompany/create', ResumeCreateView.as_view(), name='mycompany_create'),
+
+    path('vacancylist', VacancyListView.as_view(), name='vacancy_list'),
+    path('vacancyedit/<pk>', VacancyEditView.as_view(), name='mycompany_vacancy_edit'),
 
     path('search/', search, name='search'),
     path('search/<query>', search, name='search_with_param'),
     path('login', MyLoginView.as_view(), name='login'),
     path('register', MySignupView.as_view(), name='register'),
     path('logout', LogoutView.as_view(), name='logout')
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
 
 handler404 = custom_handler404
 handler500 = custom_handler500

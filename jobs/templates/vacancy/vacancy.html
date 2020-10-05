@@ -9,21 +9,22 @@
       </div>
       <div class="col-12 col-lg-8">
         <section class="pl-3">
-          <a href="{% url 'company' company.id %}"><img src="{{ company.logo.url }}" width="130" height="80" alt=""></a>
+          <a href="{% url 'company' pk=vacancy.company.id %}"><img src="{{ vacancy.company.logo.url }}" width="130" height="80" alt=""></a>
           <div class="d-flex align-items-baseline align-content-baseline">
             <h1 class="h2 mt-4 font-weight-bold" >{{ vacancy.title }}</h1>
             <p class="m-0 pl-3">{{ vacancy.salary_min }} - {{ vacancy.salary_max }} Р</p>
           </div>
           <p class="mt-2">{{ vacancy.skills }}</p>
-          <p class="text-muted mb-4"> {{ company.name }} ({{ company.employee_count }} человек), {{ company.location }}</p>
+          <p class="text-muted mb-4"> {{ vacancy.company.name }} ({{ vacancy.company.employee_count }} человек), {{ vacancy.company.location }}</p>
           <div style="line-height: 1.8;">
             {{ vacancy.description }}
           </div>
-          <form method="POST" action="{% url 'application' vacancy.id %}" class="card mt-4 mb-3">{% csrf_token %}{% load crispy_forms_tags %}
+          <form method="POST" action="{% url 'vacancy' pk=vacancy.id %}" class="card mt-4 mb-3">{% csrf_token %}{% load crispy_forms_tags %}
             <div class="card-body mx-3">{% if user.is_authenticated %}
               <p class="h5 mt-4 mb-4 font-weight-normal">Отозваться на вакансию</p>
               <div class="form-group">
                 {{ form|crispy }}
+                  <p>{% if request.user.resumes.first %}Приложено ваше <a href="{% url 'myresume_edit' %}">резюме</a>{% else %}У вас еще нет резюме. <a href="{% url 'myresume_create' %}">Создать?</a>{% endif %}</p>
               </div>
               <input type="submit" class="btn btn-primary mt-4 mb-2" value="Откликнутся">{% else %}
                 <div class="text-center">

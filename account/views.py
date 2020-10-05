@@ -1,89 +1,112 @@
+from functools import wraps
+
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView, UpdateView, CreateView
 
-from account.forms import ResumeForm, CompanyForm
+from account.forms import ResumeForm, CompanyForm, VacancyForm
 from account.models import Resume
-from jobs.models import Company
+from jobs.models import Company, Vacancy
+
+
+# def is_owner(f): TODO make it work
+#     @wraps(f)
+#     def wrap(self, request, *args, **kwargs):
+#         if not request.user.company_set.filter(id=kwargs['id']):
+#             return HttpResponseForbidden()
+#         bound_method = f.__get__(self, type(self))
+#         return bound_method(self, *args, **kwargs)
+#     return wrap
+
+
+class MyUpdateView(UpdateView):
+    def get_object(self, **kwargs):
+        return self.model.objects.filter(user=self.request.user).first()
+
+
+class MyCreateView(CreateView):
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.user = self.request.user
+        instance.save()
+        return super().form_valid(form)
+
+
+def myresume_dispatch(request):
+    if request.user.resumes.first():
+        return HttpResponseRedirect(reverse('myresume_edit'))
+    return HttpResponseRedirect(reverse('myresume_create'))
+
+
+class ResumeEditView(MyUpdateView):
+    model = Resume
+    form_class = ResumeForm
+    template_name = 'resume/resume-edit.html'
+
+
+class ResumeCreateView(MyCreateView):
+    model = Resume
+    form_class = ResumeForm
+    template_name = 'resume/resume-edit.html'
+
+
+def mycompany_dispatch(request):
+    if request.user.company_set.first():
+        return HttpResponseRedirect(reverse('mycompany_edit'))
+    return HttpResponseRedirect(reverse('mycompany_create'))
+
+
+class CompanyEditView(MyUpdateView):
+    model = Company
+    form_class = CompanyForm
+    template_name = 'company/company-edit.html'
+
+
+class CompanyCreateView(MyCreateView):
+    model = Company
+    form_class = CompanyForm
+    template_name = 'company/company-edit.html'
+
+
+
 
 
 @method_decorator(login_required, name='dispatch')
-class MyCreateEditView(View):
-    Model = None
-    Form = None
-    template_create = None
-    template_edit = None
-    update = False
+class VacancyListView(ListView):
+    template_name = 'vacancy/vacancy-list.html'
+    context_object_name = 'vacancies'
 
-    def get(self, request, **kwargs):
-        instance = self.Model.objects.filter(user=request.user).first()
-        form = self.Form(instance=instance if instance else None)
-        context = {'form': form, 'update': self.update}
-        if instance or kwargs['action']:
-            return render(request, self.template_edit, context)
-        return render(request, self.template_create, context)
-
-    def post(self, request, **kwargs):
-        instance = self.Model.objects.filter(user=request.user).first()
-        form = self.Form(request.POST, request.FILES)
-        context = {'form': form, 'update': self.update}
-        if form.is_valid():
-            if instance:
-                instance.delete()
-            instance = form.save(commit=False)
-            instance.user = request.user
-            instance.save()
-            self.update = True
-        return render(request, self.template_edit, context)
+    def get_queryset(self):
+        company = self.request.user.company_set.first()
+        vacancies = company.vacancies.all()
+        return vacancies
 
 
-class MyResumeView(MyCreateEditView):
-    Model = Resume
-    Form = ResumeForm
-    template_create = 'resume-create.html'
-    template_edit = 'resume-edit.html'
+@method_decorator(login_required, name='dispatch')
+class VacancyEditView(UpdateView):
+    model = Vacancy
+    template_name = 'vacancy/vacancy-edit.html'
+    form_class = VacancyForm
 
-class MyCompanyView(MyCreateEditView):
-    Model = Company
-    Form = CompanyForm
-    template_create = 'company-create.html'
-    template_edit = 'company-edit.html'
+    def get_object(self, queryset=None):
+        id = self.kwargs['pk']
+        if self.request.user.company_set.filter(id=id):
+            return Vacancy.objects.filter(id=id).first()
 
-
-@login_required
-def resumes_view(request, action, update=False):
-    resume = Resume.objects.filter(user=request.user).first()
-    form = ResumeForm(request.POST or (resume.__dict__ if resume else None))
-    if request.method == 'GET':
-        if resume or action:
-            return render(request, 'resume/resume-edit.html', {'form': form, 'update': update})
-        return render(request, 'resume/resume-create.html')
-    if request.method == 'POST' and form.is_valid():
-        if resume:
-            resume.delete()
-        resume = form.save(commit=False)
-        resume.user = request.user
-        resume.save()
-        update = True
-    return render(request, 'resume/resume-edit.html', {'form': form, 'update': update})
-
-
-@login_required
-def mycompany_view(request, action, update=False):
-    company = Company.objects.filter(owner=request.user).first()
-    if request.method == 'GET':
-        form = CompanyForm(company.__dict__ if company else None)
-        if company or action:
-            return render(request, 'company/company-edit.html', {'form': form, 'update': update})
-        return render(request, 'company/company-create.html')
-    form = CompanyForm(request.POST, request.FILES)
-    if request.method == 'POST' and form.is_valid():
-        if company:
-            company.delete()
-        company = form.save(commit=False)
-        company.user = request.user
-        company.save()
-        update = True
-    return render(request, 'company/company-edit.html', {'form': form, 'update': update})
+    # def get(self, request, *args, **kwargs):
+    #     id = kwargs['id']
+    #     if request.user.company_set.filter(id=id):
+    #         vacancy = Vacancy.objects.filter(id=id).first()
+    #         form = VacancyForm(instance=vacancy)
+    #         return render(request, 'vacancy/vacancy-edit.html', {'form': form, 'vacancy': vacancy})
+    #     return HttpResponseForbidden()
+    #
+    # def post(self, request, *args, **kwargs):
+    #     id = kwargs['id']
+    #     form = VacancyForm(request.POST)
+    #     if form.is_valid():
+    #         form.save()

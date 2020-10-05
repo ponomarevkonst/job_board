@@ -6,8 +6,8 @@
             <a href="{% url 'company' company.id %}" style="max-width: 150px;" class="mx-auto d-block">
               <img class="mx-auto d-block mw-100" src="{{ company.logo.url }}" alt="">
             </a>
-            <div class="card-body">
-              <p class="card-text"><a href="{% url 'company' company.id %}">{{ company.vacancies_count }} ваканси{% if vacancies_count == 1 %}я{% else %}й{% endif %}</a></p>
+            <div class="card-body">{% if not request.get_full_path == '/companies/list' %}
+              <p class="card-text"><a href="{% url 'company' company.id %}">{{ company.vacancies.all|length }} ваканси{% if company.vacancies.all|length == 1 %}я{% else %}й{% endif %}</a></p>{% endif %}
             </div>
           </div>
         </div>{% endfor %}

@@ -18,10 +18,10 @@
       <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
         <ul class="navbar-nav col-10">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'vacancies' %}">Вакансии</a>
+            <a class="nav-link" href="{% url 'vacancies_list' %}">Вакансии</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'index' %}#companies">Компании</a>
+            <a class="nav-link" href="{% url 'company_list' %}">Компании</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">О проекте</a>
@@ -34,8 +34,8 @@
               </button>
               <div class="dropdown-menu dropdown-menu-right mt-3">
                 <a href="#" class="dropdown-item py-2">Профиль</a>
-                <a href="{% url 'myresume' action='' %}" class="dropdown-item py-2">Резюме</a>
-                <a href="{% url 'mycompany' action='' %}" class="dropdown-item зн-2">Компания</a>
+                <a href="{% url 'myresume' %}" class="dropdown-item py-2">Резюме</a>
+                <a href="{% url 'mycompany' %}" class="dropdown-item зн-2">Компания</a>
                 <a href="{% url 'logout' %}" class="dropdown-item py-2">Выйти</a>
               </div>
             </div>

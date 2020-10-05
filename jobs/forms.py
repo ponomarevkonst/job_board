@@ -29,7 +29,7 @@ class RegisterForm(UserCreationForm):
 class ApplicationForm(forms.ModelForm):
     written_username = forms.CharField(label='Имя')
     written_phone = forms.CharField(label='Номер телефона')
-    written_cover_letter = forms.CharField(label='Сопроводительное письмо', widget=forms.Textarea)
+    written_cover_letter = forms.CharField(label='Сопроводительное письмо', widget=forms.Textarea, required=False)
 
     class Meta:
         model = Application

@@ -3,7 +3,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from account.choices import GRADE_CHOICES, SPECIALITY_CHOICES, WORK_STATUS_CHOICES
 from account.models import Resume
-from jobs.models import Company
+from jobs.models import Company, Vacancy
 
 
 class MyForm(forms.ModelForm):
@@ -25,8 +25,7 @@ class ResumeForm(MyForm):
 
     class Meta:
         model = Resume
-        fields = ('name', 'phone', 'surname',
-                  'status', 'salary', 'specialty',
+        fields = ('phone', 'status', 'salary', 'specialty',
                   'grade', 'education', 'experience', 'portfolio')
 
 
@@ -37,4 +36,12 @@ class CompanyForm(MyForm):
         model = Company
         fields = ('name', 'location', 'description', 'employee_count', 'logo')
 
-    # <span class="btn btn-info px-4">Загрузить</span>
+
+class VacancyForm(MyForm):
+    skills = forms.CharField(widget=forms.Textarea)
+    description = forms.CharField(widget=forms.Textarea)
+    specialty = forms.ChoiceField(choices=SPECIALITY_CHOICES)
+
+    class Meta:
+        model = Vacancy
+        fields = ('title', 'specialty', 'salary_min', 'salary_max', 'skills', 'description')

@@ -1,13 +1,15 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, TemplateView
 from django.contrib.postgres.search import SearchVector
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect, request as req
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView, FormView
 from job_board.settings import LOGIN_REDIRECT_URL
 from jobs.forms import RegisterForm, ApplicationForm, SearchForm
 from jobs.models import Company, Vacancy, Specialty
+
+SEARCH_EXAMPLES = ['Python', 'Flask', 'Django', 'Парсинг', 'ML']
 
 
 class MySignupView(CreateView):
@@ -27,55 +29,70 @@ class MyLoginView(LoginView):
     template_name = 'login.html'
 
 
-def index_view(request):
-    context = {'specialties': [], 'companies': [], 'form': SearchForm(),
-               'examples': ['Python', 'Flask', 'Django', 'Парсинг', 'ML']}
-    for company in Company.objects.all():
-        context['companies'].append({'logo': company.logo, 'id': company.id,
-                                     'vacancies_count': company.vacancies.count()})
-    for specialty in Specialty.objects.all():
-        context['specialties'].append({'picture': specialty.picture, 'title': specialty.title,
-                                       'vacancies_count': specialty.vacancies.count(), 'code': specialty.code})
-    return render(request, 'index.html', context)
+class IndexView(TemplateView):
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'specialties': Specialty.objects.all(), 'companies': Company.objects.all(),
+                        'form': SearchForm(), 'examples': SEARCH_EXAMPLES})
+        return context
 
 
-def companies_view(request, company_id, context={}):
-    company = get_object_or_404(Company, id=company_id)
-    context['vacancies'] = company.vacancies.all()
-    context['company'] = {'name': company.name, 'logo': company.logo}
-    return render(request, 'company/company.html', context)
+class CompaniesListView(ListView):
+    model = Company
+    context_object_name = 'companies'
+    template_name = 'company/company_list.html'
 
 
-def vacancies_view(request, id=None, context={}):  # @TODO make 3 different classes for increasing readability
-    if id:
-        if id.isnumeric():  # get single vacancy by id
-            context['vacancy'] = get_object_or_404(Vacancy, id=id)
-            context['company'] = context['vacancy'].company
-            context['form'] = ApplicationForm()
-            return render(request, 'vacancy/vacancy.html', context)
-        else:  # get vacancies by category_id
-            category_name = Specialty.objects.filter(code=id).first().title
-            context['category_name'] = category_name if category_name else 'Категория не найдена'
-            context['vacancies'] = Vacancy.objects.filter(specialty__code=id).all()
-    else:  # get all vacancies
-        context['category_name'] = 'Все вакансии'
-        context['vacancies'] = Vacancy.objects.all()
-    return render(request, 'vacancy/vacancies.html', context)
+class CompaniesView(DetailView):
+    model = Company
+    template_name = 'company/company.html'
+    context_object_name = 'company'
 
 
-def application(request, vacancy_id):
-    form = ApplicationForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
+class VacanciesListView(ListView):
+    model = Vacancy
+    template_name = 'vacancy/vacancies.html'
+    context_object_name = 'vacancies'
+
+    def get_queryset(self, **kwargs):
+        if not 'pk' in self.kwargs:
+            return self.model.objects.all()
+        return self.model.objects.filter(specialty__code=self.kwargs['pk'])
+
+
+class VacancyView(CreateView):
+    model = Vacancy
+    form_class = ApplicationForm
+    template_name = 'vacancy/vacancy.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VacancyView, self).get_context_data(**kwargs)
+        context['vacancy'] = self.model.objects.filter(id=self.kwargs['pk']).first()
+        return context
+
+    def get_form(self, **kwargs):
+        resume = self.request.user.resumes.first()
+        if resume:
+            user = self.request.user
+            name = user.first_name + ' ' + user.last_name
+            phone = resume.phone
+            form_data = {'written_username': name, 'written_phone': phone}
+            return self.form_class(form_data)
+        return super(VacancyView, self).get_form(**kwargs)
+
+    def form_valid(self, form):
         application = form.save(commit=False)
-        application.vacancy = Vacancy.objects.filter(id=vacancy_id).first()
-        application.user = request.user
+        application.vacancy = self.model.objects.filter(id=self.kwargs['pk']).first()
+        application.user = self.request.user
         application.save()
-        return render(request, 'sent.html', {"vacancy_id": vacancy_id})
+        return render(self.request, 'sent.html', {"vacancy_id": self.kwargs['pk']})
 
 
 @csrf_exempt
 def search(request, query=None):
-    if not query:
+    if not query and 'query' in request.GET:
         query = request.GET['query']
     form = SearchForm({'query': query})
     context = {'results': [], 'form': form}
@@ -83,7 +100,6 @@ def search(request, query=None):
         query = form.cleaned_data['query']
         context['vacancies'] = Vacancy.objects.annotate(search=SearchVector('title', 'description')).filter(search=query)
     return render(request, 'search/search_page.html', context)
-
 
 
 def custom_handler404(request, exception):

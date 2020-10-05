@@ -16,12 +16,12 @@
       <div class="row mb-0">{% for specialty in specialties %}
         <div class="col-6 col-md-6 col-lg-3">
           <div class="card pt-4 text-center mb-4">
-            <a href="{% url 'vacancies_by_category' specialty.code %}">
+            <a href="{% url 'vacancies' specialty.code %}">
                 <img class="mx-auto d-block" src="{{ specialty.picture.url }}" width="80" height="80" alt="">
             </a>
             <div class="card-body">
               <p class="card-text mb-2">{{ specialty.title }}</p>
-              <p class="card-text"><a href="{% url 'vacancies_by_category' specialty.code %}">{{ specialty.vacancies_count }} ваканси{% if specialty.vacancies_count == 1 %}я{% else %}й{% endif %}</a></p>
+              <p class="card-text"><a href="{% url 'vacancies' specialty.code %}">{{ specialty.vacancies.all|length }} ваканси{% if specialty.vacancies.all|length == 1 %}я{% else %}й{% endif %}</a></p>
             </div>
           </div>
         </div>{% endfor %}

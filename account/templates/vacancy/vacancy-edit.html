@@ -14,25 +14,21 @@
         <div class="card">
           <div class="card-body px-4 pb-4 tab-content">
             <!-- Tab -->
-            <section>
-              <h2 class="h4 pt-2 pb-3">Backend Middle/Senior</h2>
+            <section>{%  load crispy_forms_tags %}
+              <h2 class="h4 pt-2 pb-3">{{ vacancy.title }}</h2>
               <p class="alert alert-info" role="alert">Вакансия обновлена</p>
-              <form action="/echo">
+              <form method="post" action="{% url 'mycompany_vacancy_edit' %}">{% csrf_token %}
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="vacancyTitle">Название вакансии</label>
-                      <input class="form-control" type="text" value="Staffing Smarter" id="vacancyTitle">
+                      {{ form.title|as_crispy_field }}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="userSpecialization">Специализация</label>
-                      <select class="custom-select mr-sm-2" id="userSpecialization">
-                        <option selected>Backend разработка</option>
-                        <option value="1">Frontend разработка</option>
-                        <option value="2">Project manager</option>
-                      </select>
+                      {{ form.specialty|as_crispy_field }}
                     </div>
                   </div>
                 </div>
@@ -40,32 +36,23 @@
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2 text-dark" for="vacancySalaryMin">Зарплата от</label>
-                      <input class="form-control" type="text" value="90 000" id="vacancySalaryMin">
+                      {{ form.salary_min|as_crispy_field }}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
                       <label class="mb-2" for="vacancySalaryMax">Зарплата до</label>
-                      <input class="form-control" type="text" value="90 000" id="vacancySalaryMax">
+                      {{ form.salary_max|as_crispy_field }}
                     </div>
                   </div>
                 </div>
                 <div class="form-group pb-2">
                   <label class="mb-2 text-dark" for="vacancySkills">Требуемые навыки</label>
-                  <textarea class="form-control" rows="3" id="vacancySkills" style="color:#000;">Бэкенд • Средний (Middle) • PHP • PostgreSQL • MySQL • Node.js • Laravel • Symfony • Yii framework • Sails.js • Rabbitmq • Kafka</textarea>
+                  {{ form.skills|as_crispy_field }}
                 </div>
                 <div class="form-group pb-2">
                   <label class="mb-2 text-dark" for="vacancyDescription">Описание вакансии</label>
-                  <textarea class="form-control" rows="13" id="vacancyDescription" style="color:#000;">Финтех компания входит в международную группу  и занимается развитием факторингового бизнеса. В связи с расширением штата, мы хотим усилить нашу команду Backend-разработчиком, для работы над улучшением продуктов компании.
-                    Мы предлагаем:
-                    Оформление по ТК РФ
-                    ДМС со стоматологией
-                    Достойную зарплату, уровень которой можно обсудить по телефону с рекрутером
-                    Гибкое начало дня, отдельные дни удаленной работы обсуждаются
-                    Современный офис
-                    Демократичную корпоративную культуру
-                    Работу в команде по Scrum
-                  </textarea>
+                  {{ form.description|as_crispy_field }}
                 </div>
                 <div class="form-group">
                   <input type="submit" class="btn btn-info" value="Сохранить">

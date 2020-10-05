@@ -1,12 +1,15 @@
 from django.contrib.auth.models import User
 from django.db import models
+
+from account.models import Resume
 from job_board.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
 
 
 class Specialty(models.Model):
     code = models.CharField(max_length=30)
     title = models.CharField(max_length=30)
-    picture = models.ImageField(upload_to=MEDIA_SPECIALITY_IMAGE_DIR, height_field='height_field', width_field='width_field')
+    picture = models.ImageField(upload_to=MEDIA_SPECIALITY_IMAGE_DIR, height_field='height_field',
+                                width_field='width_field')
     height_field = models.PositiveIntegerField(default=0)
     width_field = models.PositiveIntegerField(default=0)
 
@@ -53,11 +56,9 @@ class Vacancy(models.Model):
 class Application(models.Model):
     written_username = models.CharField(max_length=30)
     written_phone = models.CharField(max_length=30)
-    written_cover_letter = models.CharField(max_length=350)
+    written_cover_letter = models.CharField(max_length=350, null=True, blank=True)
     vacancy = models.ForeignKey(Vacancy, related_name="applications", on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name="applications", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.written_username
-
-
