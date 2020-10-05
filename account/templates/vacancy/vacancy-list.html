@@ -1,32 +1,19 @@
-{% extends 'base.html' %} {% block container %}
-  <main class="container mt-3 pb-5">
-    <div class="row mt-5">
-      <div class="col-12 col-lg-4">
-        <aside class="pt-3 pb-4 px-4 mb-5 card">
-          <h1 class="h4 pt-2 pb-2">Моя компания</h1>
-          <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link" href="{% url 'mycompany' action='edit' %}">1. Информация о&nbsp;компании</a>
-            <a class="nav-link active" href="{% url 'vacancy_list' %}">2. Вакансии</a>
-          </div>
-        </aside>
-      </div>
-      <div class="col-12 col-lg-8">
-        <div class="card">
-          <div class="card-body px-4 pb-4">
+{% extends 'company-base.html' %} {% block content %}
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">Вакансии</h2>
               <!-- vacancy state 1 -->{% for vacancy in vacancies %}
               <div class="card mt-3">
                 <div class="card-body px-4">
                   <div class="row align-items-center">
-                    <div class="col-6 col-lg-8">
-                      <a href="{% url 'vacancy' id=vacancy.id %}" class="mb-1">{{ vacancy.title }}</a>
+                    <div class="col-6 col-lg-9">
+                      <a href="{% url 'vacancy' pk=vacancy.id %}" class="mb-1">{{ vacancy.title }}</a>
                       <p class="mb-1">
-                        <span class="mr-4">{{ vacancy.salary_min }} - {{ vacancy.salary_max }}</span><a href="{% url 'mycompany_vacancy_edit' id=vacancy.id %}#applications" class="text-info">{% if vacancy.applications.count == 0 %}Нет откликов{% else %}{{ vacancy.applications.count }}{% endif %}</a>
+                        <span class="mr-4">{{ vacancy.salary_min }} - {{ vacancy.salary_max }}</span><a href="{% url 'mycompany_vacancy_edit' pk=vacancy.id %}#applications" class="text-info">{% if vacancy.applications.count == 0 %}Нет откликов{% elif vacancy.applications.count == 1 %}1 отклик{% elif vacancy.applications.count < 6 %}{{ vacancy.applications.count }} отклика{% else %}{{ vacancy.applications.count }} откликов{% endif %}</a>
                       </p>
                     </div>
-                    <div class="col-6 col-lg-4 text-right">
-                      <a href="{% url 'mycompany_vacancy_edit' id=vacancy.id %}" class="btn btn-outline-info">Изменить</a>
+                    <div class="col-6 col-lg-3 text-right">
+                      <a href="{% url 'mycompany_vacancy_edit' pk=vacancy.id %}" class="btn btn-outline-info mb-2 btn-block">Изменить</a>
+                        <form method="POST" action="{% url "mycompany_vacancy_delete" pk=vacancy.id %}">{% csrf_token %}<input type="submit" class="btn btn-outline-danger btn-block" onclick="return confirm('Вы действительно хотите удалить вакансию?');" value="Удалить"></form>
                     </div>
                   </div>
                 </div>
@@ -37,16 +24,11 @@
                 <div class="card-body px-4">
                   <div class="row align-items-center">
                       <div class="col-md-12 text-center">
-                          <a href="#" class="btn btn-outline-info">Создать вакансию</a>
+                          <a href="{% url 'mycompany_vacancy_create' %}" class="btn btn-outline-info">Создать вакансию</a>
                       </div>
                   </div>
                 </div>
               </div>
                 <!-- END vacancy create -->
             </section>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
 {% endblock %}

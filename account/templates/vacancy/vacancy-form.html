@@ -1,0 +1,39 @@
+<div class="row">{%  load crispy_forms_tags %}
+  <div class="col-12 col-md-6">
+    <div class="form-group pb-2">
+      <label class="mb-2 text-dark" for="vacancyTitle">Название вакансии</label>
+      {{ form.title|as_crispy_field }}
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="form-group pb-2">
+      <label class="mb-2 text-dark" for="userSpecialization">Специализация</label>
+      {{ form.specialty|as_crispy_field }}
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12 col-md-6">
+    <div class="form-group pb-2">
+      <label class="mb-2 text-dark" for="vacancySalaryMin">Зарплата от</label>
+      {{ form.salary_min|as_crispy_field }}
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="form-group pb-2">
+      <label class="mb-2" for="vacancySalaryMax">Зарплата до</label>
+      {{ form.salary_max|as_crispy_field }}
+    </div>
+  </div>
+</div>
+<div class="form-group pb-2">
+  <label class="mb-2 text-dark" for="vacancySkills">Требуемые навыки</label>
+  {{ form.skills|as_crispy_field }}
+</div>
+<div class="form-group pb-2">
+  <label class="mb-2 text-dark" for="vacancyDescription">Описание вакансии</label>
+  {{ form.description|as_crispy_field }}
+</div>
+<div class="form-group">
+  <input type="submit" class="btn btn-info" value="Сохранить">
+</div>

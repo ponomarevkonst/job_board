@@ -3,7 +3,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from account.choices import GRADE_CHOICES, SPECIALITY_CHOICES, WORK_STATUS_CHOICES
 from account.models import Resume
-from jobs.models import Company, Vacancy
+from jobs.models import Company, Vacancy, Specialty
 
 
 class MyForm(forms.ModelForm):
@@ -40,7 +40,7 @@ class CompanyForm(MyForm):
 class VacancyForm(MyForm):
     skills = forms.CharField(widget=forms.Textarea)
     description = forms.CharField(widget=forms.Textarea)
-    specialty = forms.ChoiceField(choices=SPECIALITY_CHOICES)
+    specialty = forms.ModelChoiceField(queryset=Specialty.objects.all())
 
     class Meta:
         model = Vacancy

@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block container %}
+    <style>
+    .input-group-text {
+      display: none;
+    }
+</style>
+ <main class="container mt-3 pb-5">
+    <div class="row mt-5">
+      <div class="col-12 col-lg-4">
+        <aside class="pt-3 pb-4 px-4 mb-5 card">
+          <h1 class="h4 pt-2 pb-2">Моя компания</h1>
+          <div class="nav flex-column nav-pills">{% url 'mycompany_edit' as edit_url %}{% url 'mycompany_vacancy_list' as list_url %}
+            <a href="{{ edit_url }}" class="nav-link{% if request.get_full_path == edit_url %} active{% endif %}">1. Информация о&nbsp;компании</a>
+            {% if user.company_set.count != 0 %}<a href="{{ list_url }}" class="nav-link {% if request.get_full_path == list_url %}active{% endif %}">2. Вакансии</a>{% endif %}
+          </div>
+        </aside>
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4">
+        {% block content %} {% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

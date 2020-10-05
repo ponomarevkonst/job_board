@@ -35,6 +35,9 @@ class Company(models.Model):
         self.logo.storage.delete(self.logo.path)
         super(Company, self).delete(*args, **kwargs)
 
+    def is_owner(self, user):
+        return self.user == user
+
     def __str__(self):
         return self.name
 
@@ -47,7 +50,10 @@ class Vacancy(models.Model):
     description = models.CharField(max_length=30)
     salary_min = models.IntegerField()
     salary_max = models.IntegerField()
-    published_at = models.DateTimeField()
+    published_at = models.DateTimeField(auto_now_add=True)
+
+    def get_absolute_url(self):
+        return self.id
 
     def __str__(self):
         return str(self.id) + ': ' + self.title

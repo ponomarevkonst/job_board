@@ -1,45 +1,33 @@
-from functools import wraps
-
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views import View
-from django.views.generic import ListView, FormView, UpdateView, CreateView
+from django.views.generic import ListView, UpdateView, CreateView
+from django.views.generic.edit import DeleteView
 
 from account.forms import ResumeForm, CompanyForm, VacancyForm
 from account.models import Resume
-from jobs.models import Company, Vacancy
+from jobs.models import Company, Vacancy, Application
 
 
-# def is_owner(f): TODO make it work
-#     @wraps(f)
-#     def wrap(self, request, *args, **kwargs):
-#         if not request.user.company_set.filter(id=kwargs['id']):
-#             return HttpResponseForbidden()
-#         bound_method = f.__get__(self, type(self))
-#         return bound_method(self, *args, **kwargs)
-#     return wrap
-
-
+@method_decorator(login_required, name='dispatch')
 class MyUpdateView(UpdateView):
     def get_object(self, **kwargs):
         return self.model.objects.filter(user=self.request.user).first()
 
-
-class MyCreateView(CreateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.user = self.request.user
         instance.save()
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER', '/'))
 
 
+@login_required
 def myresume_dispatch(request):
     if request.user.resumes.first():
         return HttpResponseRedirect(reverse('myresume_edit'))
-    return HttpResponseRedirect(reverse('myresume_create'))
+    return render(request, 'resume/resume-create.html')
 
 
 class ResumeEditView(MyUpdateView):
@@ -48,16 +36,18 @@ class ResumeEditView(MyUpdateView):
     template_name = 'resume/resume-edit.html'
 
 
-class ResumeCreateView(MyCreateView):
+@method_decorator(login_required, name='dispatch')
+class ResumeCreateView(CreateView):
     model = Resume
     form_class = ResumeForm
     template_name = 'resume/resume-edit.html'
 
 
+@login_required
 def mycompany_dispatch(request):
     if request.user.company_set.first():
         return HttpResponseRedirect(reverse('mycompany_edit'))
-    return HttpResponseRedirect(reverse('mycompany_create'))
+    return render(request, 'company/company-create.html')
 
 
 class CompanyEditView(MyUpdateView):
@@ -66,13 +56,11 @@ class CompanyEditView(MyUpdateView):
     template_name = 'company/company-edit.html'
 
 
-class CompanyCreateView(MyCreateView):
+@method_decorator(login_required, name='dispatch')
+class CompanyCreateView(CreateView):
     model = Company
     form_class = CompanyForm
     template_name = 'company/company-edit.html'
-
-
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -87,26 +75,44 @@ class VacancyListView(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
+class VacancyCreateView(CreateView):
+    model = Vacancy
+    template_name = 'vacancy/vacancy-create.html'
+    form_class = VacancyForm
+
+    def form_valid(self, form):
+        vacancy = form.save(commit=False)
+        vacancy.company = self.request.user.company_set.first()
+        vacancy.save()
+        return HttpResponseRedirect(reverse_lazy('mycompany_vacancy_edit', args=(vacancy.id,)))
+
+
+@method_decorator(login_required, name='dispatch')
+class VacancyDeleteView(DeleteView):
+    model = Vacancy
+    success_url = reverse_lazy('mycompany_vacancy_list')
+
+
+@method_decorator(login_required, name='dispatch')
 class VacancyEditView(UpdateView):
     model = Vacancy
     template_name = 'vacancy/vacancy-edit.html'
     form_class = VacancyForm
 
-    def get_object(self, queryset=None):
-        id = self.kwargs['pk']
-        if self.request.user.company_set.filter(id=id):
-            return Vacancy.objects.filter(id=id).first()
+    def get(self, request, *args, **kwargs):
+        company = Company.objects.filter(vacancies__id=self.kwargs['pk']).first()
+        if company.is_owner(request.user):
+            return super(VacancyEditView, self).get(self, request, *args, **kwargs)
+        return HttpResponseRedirect(reverse_lazy('mycompany_vacancy_list'))
 
-    # def get(self, request, *args, **kwargs):
-    #     id = kwargs['id']
-    #     if request.user.company_set.filter(id=id):
-    #         vacancy = Vacancy.objects.filter(id=id).first()
-    #         form = VacancyForm(instance=vacancy)
-    #         return render(request, 'vacancy/vacancy-edit.html', {'form': form, 'vacancy': vacancy})
-    #     return HttpResponseForbidden()
-    #
-    # def post(self, request, *args, **kwargs):
-    #     id = kwargs['id']
-    #     form = VacancyForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['applications'] = Application.objects.filter(vacancy_id=self.kwargs['pk'])
+        return context
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.user = self.request.user
+        instance.save()
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER', '/'))
+

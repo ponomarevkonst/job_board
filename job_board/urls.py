@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import path, re_path
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
 from account.views import VacancyListView, VacancyEditView, ResumeEditView, \
-    ResumeCreateView, myresume_dispatch, mycompany_dispatch
+    ResumeCreateView, myresume_dispatch, mycompany_dispatch, CompanyCreateView, CompanyEditView, VacancyCreateView, \
+    VacancyDeleteView
 from jobs.views import custom_handler404, custom_handler500, MyLoginView, \
     MySignupView, CompaniesView, search, CompaniesListView, IndexView, VacanciesListView, VacancyView
 
@@ -35,16 +36,17 @@ urlpatterns = [
     path('vacancies/', VacanciesListView.as_view(), name='vacancies_list'),
     path('vacancies/<pk>', VacancyView.as_view(), name='vacancy'),
 
-    path('myresume', myresume_dispatch, name='myresume'),
+    path('myresume/', myresume_dispatch, name='myresume'),
     path('myresume/edit', ResumeEditView.as_view(), name='myresume_edit'),
     path('myresume/create', ResumeCreateView.as_view(), name='myresume_create'),
 
-    path('mycompany', mycompany_dispatch, name='mycompany'),
-    path('mycompany/edit', ResumeEditView.as_view(), name='mycompany_edit'),
-    path('mycompany/create', ResumeCreateView.as_view(), name='mycompany_create'),
-
-    path('vacancylist', VacancyListView.as_view(), name='vacancy_list'),
-    path('vacancyedit/<pk>', VacancyEditView.as_view(), name='mycompany_vacancy_edit'),
+    path('mycompany/', mycompany_dispatch, name='mycompany'),
+    path('mycompany/edit', CompanyEditView.as_view(), name='mycompany_edit'),
+    path('mycompany/create', CompanyCreateView.as_view(), name='mycompany_create'),
+    path('mycompany/vacancy/list', VacancyListView.as_view(), name='mycompany_vacancy_list'),
+    path('mycompany/vacancy/create', VacancyCreateView.as_view(), name='mycompany_vacancy_create'),
+    path('mycompany/vacancy/edit/<pk>', VacancyEditView.as_view(), name='mycompany_vacancy_edit'),
+    path('mycompany/vacancy/delete/<pk>', VacancyDeleteView.as_view(), name='mycompany_vacancy_delete'),
 
     path('search/', search, name='search'),
     path('search/<query>', search, name='search_with_param'),
