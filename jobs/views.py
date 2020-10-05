@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView, TemplateView
 from django.contrib.postgres.search import SearchVector
-from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect, request as req
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, ListView, DetailView, FormView
+from django.views.generic import CreateView, ListView, DetailView
 from job_board.settings import LOGIN_REDIRECT_URL
 from jobs.forms import RegisterForm, ApplicationForm, SearchForm
 from jobs.models import Company, Vacancy, Specialty
@@ -57,7 +57,7 @@ class VacanciesListView(ListView):
     context_object_name = 'vacancies'
 
     def get_queryset(self, **kwargs):
-        if not 'pk' in self.kwargs:
+        if 'pk' not in self.kwargs:
             return self.model.objects.all()
         return self.model.objects.filter(specialty__code=self.kwargs['pk'])
 
@@ -98,7 +98,8 @@ def search(request, query=None):
     context = {'results': [], 'form': form}
     if form.is_valid():
         query = form.cleaned_data['query']
-        context['vacancies'] = Vacancy.objects.annotate(search=SearchVector('title', 'description')).filter(search=query)
+        context['vacancies'] = Vacancy.objects.annotate(search=SearchVector('title', 'description')).filter(
+            search=query)
     return render(request, 'search/search_page.html', context)
 
 

@@ -115,4 +115,3 @@ class VacancyEditView(UpdateView):
         instance.user = self.request.user
         instance.save()
         return HttpResponseRedirect(self.request.META.get('HTTP_REFERER', '/'))
-

@@ -1,7 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-
-from account.models import Resume
 from job_board.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
 
 
