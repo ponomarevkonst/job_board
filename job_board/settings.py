@@ -15,22 +15,19 @@ import secrets
 import locale
 from django.conf.locale.ru import formats as ru_formats
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'A6rWhmDOLyIwY_gc2aDKF-PzFIiKH5iyeF7GxNfay2_yUj38x4k76eCkZl-iIpCvrns' # secrets.token_urlsafe(50)
+SECRET_KEY = secrets.token_urlsafe(50)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
-
 
 # Application definition
 
@@ -77,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'job_board.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -93,7 +89,6 @@ DATABASES = {
     }
 
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -113,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -131,7 +125,6 @@ locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 ru_formats.DATE_FORMAT = 'd.m.Y'
 ru_formats.TIME_FORMAT = 'H:i'
 ru_formats.DATETIME_FORMAT = 'd.m.Y H:i'
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
