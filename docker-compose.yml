@@ -6,6 +6,8 @@ services:
     command: gunicorn job_board.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/home/app/web
+      - static_volume:/home/app/web/static
+      - media_volume:/home/app/web/media
     expose:
       - 8000
   db:
