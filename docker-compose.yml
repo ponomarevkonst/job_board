@@ -19,5 +19,5 @@ services:
       - POSTGRES_PASSWORD=jobs_password
       - POSTGRES_DB=jobs
 
-  volumes:
-    postgres_data:
+volumes:
+  postgres_data:
