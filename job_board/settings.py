@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = secrets.token_urlsafe(50)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False 
 
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '172.20.10.3']
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'ponomarevk.ru', '84.201.178.213']
 
 # Application definition
 
@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': 'jobs',
         'USER': 'jobs_user',
         'PASSWORD': 'jobs_password',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': 5432,
     }
 
