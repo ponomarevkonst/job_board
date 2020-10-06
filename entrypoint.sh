@@ -10,9 +10,7 @@ then
 
     echo "PostgreSQL started"
 fi
-python manage.py makemigrations jobs
-python manage.py makemigrations account
-python manage.py migrate jobs
-python manage.py migrate account
-python manage.py populate_db 
+python manage.py makemigrations 
+python manage.py migrate
+python manage.py populate_db
 exec "$@"
