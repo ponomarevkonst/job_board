@@ -47,8 +47,6 @@ specialties = [
 ]
 
 """ Статусы в формате Enum """
-
-
 class EducationChoices(Enum):
     missing = 'Отсутствует'
     secondary = 'Среднее'
