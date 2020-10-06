@@ -55,21 +55,22 @@ class Command(BaseCommand):
     help = 'Command for filling database with prepared data'
 
     def handle(self, *args, **options):
-        User.objects.create_user('user', 'user@example.com', 'userpass')
-        user=User.objects.first()
-        for specialty in specialties:
-            picture_name = '/specty_' + specialty['code'] + '.png'
-            picture_path = MEDIA_SPECIALITY_IMAGE_DIR + picture_name
-            Specialty(code=specialty['code'], title=specialty['title'], picture=picture_path).save()
+        if not User.objects.first():
+            User.objects.create_user('user', 'user@example.com', 'userpass')
+            user=User.objects.first()
+            for specialty in specialties:
+                picture_name = '/specty_' + specialty['code'] + '.png'
+                picture_path = MEDIA_SPECIALITY_IMAGE_DIR + picture_name
+                Specialty(code=specialty['code'], title=specialty['title'], picture=picture_path).save()
 
-        for company in companies:
-            logo_name = company['title'] + '.png'
-            logo_path = MEDIA_COMPANY_IMAGE_DIR + '/' + logo_name
-            Company(name=company['title'], user_id=user.id, employee_count=random.randint(10, 50), logo=logo_path).save()
+            for company in companies:
+                logo_name = company['title'] + '.png'
+                logo_path = MEDIA_COMPANY_IMAGE_DIR + '/' + logo_name
+                Company(name=company['title'], user_id=user.id, employee_count=random.randint(10, 50), logo=logo_path).save()
 
-        for job in jobs:
-            specialty = Specialty.objects.filter(code=job['cat'])[0]
-            company = Company.objects.filter(name=job['company'])[0]
-            Vacancy(title=job['title'], specialty=specialty, company=company,
-                    description=job['desc'], published_at=timezone.now(),
-                    salary_min=int(job['salary_from']), salary_max=int(job['salary_to'])).save()
+            for job in jobs:
+                specialty = Specialty.objects.filter(code=job['cat'])[0]
+                company = Company.objects.filter(name=job['company'])[0]
+                Vacancy(title=job['title'], specialty=specialty, company=company,
+                        description=job['desc'], published_at=timezone.now(),
+                        salary_min=int(job['salary_from']), salary_max=int(job['salary_to'])).save()
