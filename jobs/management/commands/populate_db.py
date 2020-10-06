@@ -56,7 +56,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpass', last_login=timezone.now())
-        user_id = user.id
         for specialty in specialties:
             picture_name = '/specty_' + specialty['code'] + '.png'
             picture_path = MEDIA_SPECIALITY_IMAGE_DIR + picture_name
@@ -65,7 +64,7 @@ class Command(BaseCommand):
         for company in companies:
             logo_name = company['title'] + '.png'
             logo_path = MEDIA_COMPANY_IMAGE_DIR + '/' + logo_name
-            Company(name=company['title'], employee_count=random.randint(10, 50), user_id=user_id, logo=logo_path).save()
+            Company(name=company['title'], employee_count=random.randint(10, 50), logo=logo_path).save()
 
         for job in jobs:
             specialty = Specialty.objects.filter(code=job['cat'])[0]
