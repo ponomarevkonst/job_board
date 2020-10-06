@@ -14,5 +14,5 @@ python manage.py makemigrations jobs
 python manage.py makemigrations account
 python manage.py migrate jobs
 python manage.py migrate account
-python manage.py init_data
+python manage.py populate_db 
 exec "$@"
