@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, ListView, DetailView
 from job_board.settings import LOGIN_REDIRECT_URL
-from jobs.forms import RegisterForm, ApplicationForm, SearchForm
-from jobs.models import Company, Vacancy, Specialty
+from .forms import RegisterForm, ApplicationForm, SearchForm
+from .models import Company, Vacancy, Specialty
 
 SEARCH_EXAMPLES = ['Python', 'Flask', 'Django', 'Парсинг', 'ML']
 

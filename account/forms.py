@@ -1,8 +1,8 @@
 from crispy_forms.helper import FormHelper
 from django import forms
 from django.core.validators import RegexValidator
-from account.choices import GRADE_CHOICES, SPECIALITY_CHOICES, WORK_STATUS_CHOICES
-from account.models import Resume
+from .choices import GRADE_CHOICES, SPECIALITY_CHOICES, WORK_STATUS_CHOICES
+from .models import Resume
 from jobs.models import Company, Vacancy, Specialty
 
 

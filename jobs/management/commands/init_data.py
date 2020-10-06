@@ -1,4 +1,5 @@
 import random
+import os
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from data import specialties, companies, jobs
@@ -11,7 +12,7 @@ class Command(BaseCommand):
     help = 'Command for filling database with prepared data'
 
     def handle(self, *args, **options):
-        user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpass', last_login=timezone.now())
+        user = User.objects.create_superuser('admin', 'admin@example.com', os.environ.get('ADMIN_PASSWORD'), last_login=timezone.now())
         user_id = user.id
         for specialty in specialties:
             picture_name = '/specty_' + specialty['code'] + '.png'

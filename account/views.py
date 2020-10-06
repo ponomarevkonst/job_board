@@ -6,8 +6,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, UpdateView, CreateView
 from django.views.generic.edit import DeleteView
 
-from account.forms import ResumeForm, CompanyForm, VacancyForm
-from account.models import Resume
+from .forms import ResumeForm, CompanyForm, VacancyForm
+from .models import Resume
 from jobs.models import Company, Vacancy, Application
 
 
