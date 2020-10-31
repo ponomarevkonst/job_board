@@ -93,7 +93,6 @@ class VacancyView(CreateView):
 
 @csrf_exempt
 def search(request, query=None):
-    print(request.user.is_anonymous)
     if not query and 'query' in request.GET:
         query = request.GET['query']
     form = SearchForm({'query': query})
