@@ -20,11 +20,11 @@
             {{ vacancy.description }}
           </div>
           <form method="POST" action="{% url 'vacancy' pk=vacancy.id %}" class="card mt-4 mb-3">{% csrf_token %}{% load crispy_forms_tags %}
-            <div class="card-body mx-3">{% if user.is_authenticated %}
+            <div class="card-body mx-3">{% if not user.is_anonymous %}
               <p class="h5 mt-4 mb-4 font-weight-normal">Отозваться на вакансию</p>
               <div class="form-group">
                 {{ form|crispy }}
-                  <p>{% if request.user.resumes.first %}Приложено ваше <a href="{% url 'myresume_edit' %}">резюме</a>{% else %}У вас еще нет резюме. <a href="{% url 'myresume_create' %}">Создать?</a>{% endif %}</p>
+                  <p>{% if user.resumes.first %}Приложено ваше <a href="{% url 'myresume_edit' %}">резюме</a>{% else %}У вас еще нет резюме. <a href="{% url 'myresume_create' %}">Создать?</a>{% endif %}</p>
               </div>
               <input type="submit" class="btn btn-primary mt-4 mb-2" value="Откликнутся">{% else %}
                 <div class="text-center">

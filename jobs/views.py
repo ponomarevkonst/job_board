@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView, TemplateView
-from django.contrib.postgres.search import SearchVector
+from django.db.models import Q
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -73,13 +73,14 @@ class VacancyView(CreateView):
         return context
 
     def get_form(self, **kwargs):
-        resume = self.request.user.resumes.first()
-        if resume:
-            user = self.request.user
-            name = user.first_name + ' ' + user.last_name
-            phone = resume.phone
-            form_data = {'written_username': name, 'written_phone': phone}
-            return self.form_class(form_data)
+        if not self.request.user.is_anonymous:
+            resume = self.request.user.resumes.first()
+            if resume:
+                user = self.request.user
+                name = user.first_name + ' ' + user.last_name
+                phone = resume.phone
+                form_data = {'written_username': name, 'written_phone': phone}
+                return self.form_class(form_data)
         return super(VacancyView, self).get_form(**kwargs)
 
     def form_valid(self, form):
@@ -92,14 +93,14 @@ class VacancyView(CreateView):
 
 @csrf_exempt
 def search(request, query=None):
+    print(request.user.is_anonymous)
     if not query and 'query' in request.GET:
         query = request.GET['query']
     form = SearchForm({'query': query})
     context = {'results': [], 'form': form}
     if form.is_valid():
         query = form.cleaned_data['query']
-        context['vacancies'] = Vacancy.objects.annotate(search=SearchVector('title', 'description')).filter(
-            search=query)
+        context['vacancies'] = Vacancy.objects.filter(Q(title__contains=query) | Q(description__contains=query)).all()
     return render(request, 'search/search_page.html', context)
 
 
